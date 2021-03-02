@@ -1,0 +1,36 @@
+*tinygo.txt*           add Tinygo support to Vim
+
+description                     |tinygo-description|
+usage                           |tinygo-usage|
+history                         |tinygo-history|
+
+==============================================================================
+DESCRIPTION                                               *tinygo-description*
+
+This is a simple extension to add TinyGo support to Vim.
+Add environment variables for tinygo and restart vim-lsp.
+Using tinygo.vim, you can easily integrate with gopls.
+
+==============================================================================
+USAGE                                                           *tinygo-usage*
+
+If an argument is specified, vim-lsp will be restarted with that target
+setting. If no argument is specified, it will open a list of targets.
+In that case, target can be selected by pressing ENTER.
+
+:TinygoTarget               open a list of targets.
+:TinygoTarget [target]      vim-lsp will be restarted with that target setting
+
+==============================================================================
+HISTORY                                                       *tinygo-history*
+
+0.1.0 03-Mar-2021
+    Initial release
+
+==============================================================================
+Copyright: (C) 2021 sago35
+The VIM LICENSE applies to this plugin; see |copyright|.
+
+==============================================================================
+ vim:tw=78:ts=8:ft=help:norl:
+
