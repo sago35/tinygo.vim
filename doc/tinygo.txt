@@ -29,7 +29,7 @@ HISTORY                                                       *tinygo-history*
 
 ==============================================================================
 Copyright: (C) 2021 sago35
-The VIM LICENSE applies to this plugin; see |copyright|.
+This software is released under the MIT License, see LICENSE.
 
 ==============================================================================
  vim:tw=78:ts=8:ft=help:norl:
