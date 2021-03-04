@@ -1,8 +1,10 @@
 # tinygo.vim
 
-This is a simple extension to add TinyGo support to Vim.  
-Add environment variables for tinygo and restart vim-lsp.  
-Using tinygo.vim, you can easily integrate with gopls.  
+This is a simple extension to add TinyGo support to Vim.  Add environment
+variables for tinygo and restart vim-lsp.  Using tinygo.vim, you can easily
+integrate with gopls.
+
+![](./tinygo-target-vim.gif)
 
 ## Usage
 

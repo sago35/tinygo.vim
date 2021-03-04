@@ -7,9 +7,9 @@ history                         |tinygo-history|
 ==============================================================================
 DESCRIPTION                                               *tinygo-description*
 
-This is a simple extension to add TinyGo support to Vim.
-Add environment variables for tinygo and restart vim-lsp.
-Using tinygo.vim, you can easily integrate with gopls.
+This is a simple extension to add TinyGo support to Vim.  Add environment
+variables for tinygo and restart vim-lsp.  Using tinygo.vim, you can easily
+integrate with gopls.
 
 ==============================================================================
 USAGE                                                           *tinygo-usage*
