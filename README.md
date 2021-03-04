@@ -6,6 +6,12 @@ integrate with gopls.
 
 ![](./tinygo-target-vim.gif)
 
+## Installing
+
+```
+Plug 'sago35/tinygo.vim'
+```
+
 ## Usage
 
 If an argument is specified, vim-lsp will be restarted with that target
@@ -15,3 +21,4 @@ In that case, target can be selected by pressing ENTER.
 ```
 :TinygoTarget               open a list of targets.
 :TinygoTarget [target]      vim-lsp will be restarted with that target setting
+```
