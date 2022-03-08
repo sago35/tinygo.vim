@@ -39,7 +39,13 @@ function! tinygo#ChangeTinygoTargetTo(target)
         let $GOROOT = l:goroot
         let $GOFLAGS = l:goflags
 
-        call execute("LspStopServer")
+        if has('nvim')
+            call execute("LspStop")
+        else
+            call execute("LspStopServer")
+        endif
+
+
         call execute("sleep 100m")
         call execute("edit")
 
