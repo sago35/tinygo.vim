@@ -16,7 +16,14 @@
 "       Initial release
 
 function! tinygo#ChangeTinygoTargetTo(target)
-    let info = json_decode(system('tinygo info -json -target ' . a:target))
+    let output = system('tinygo info -json -target ' . a:target)
+    if v:shell_error
+        for line in split(output, '\n')
+            echohl Error | echomsg line | echohl None
+        endfor
+        return
+    endif
+    let info = json_decode(output)
 
     if has_key(info, 'goroot') && has_key(info, 'goos') && has_key(info, 'goarch') && has_key(info, 'build_tags')
         let oldenv = {}
