@@ -63,7 +63,7 @@ function! tinygo#ChangeTinygoTarget()
     for target in targets
         put=target
     endfor
-    call execute('global/^$/d')
+    call execute('global/^$/d _')
 
     nmap <buffer>  <Enter>  :let target = getline('.')<CR>:quit<CR>:execute 'TinygoTarget ' . target<CR>
 endfunction
