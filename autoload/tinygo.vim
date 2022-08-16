@@ -87,7 +87,7 @@ function! tinygo#TinygoTargets(A, L, P)
     endif
 
     let l:targets = split(system('tinygo targets'), "\n")
-    return filter(l:targets, 'v:val =~? "^' . a:A . '"')
+    return filter(l:targets, 'stridx(v:val, a:A) == 0')
 endfunction
 
 " vim: ts=4 sts=0 sw=4
