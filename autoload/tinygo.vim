@@ -16,42 +16,21 @@
 "       Initial release
 
 function! tinygo#ChangeTinygoTargetTo(target)
-    let info = split(system('tinygo info -target ' . a:target), "\n")
-    for i in info
-        let data = split(i)
-        if len(data) > 2 && data[0] == "build" && data[1] == "tags:"
-            let l:goflags = "-tags=" . join(data[2:-1], ",")
-        elseif len(data) > 1 && data[0] == "GOOS:"
-            let l:goos = join(data[1:-1], ",")
-        elseif len(data) > 1 && data[0] == "GOARCH:"
-            let l:goarch = join(data[1:-1], ",")
-        elseif len(data) > 2 && data[0] == "cached" && data[1] == "GOROOT:"
-            let l:goroot = join(data[2:-1], ",")
-        endif
-    endfor
+    let info = json_decode(system('tinygo info -json -target ' . a:target))
 
-    if exists("l:goroot") && exists("l:goos") && exists("l:goarch") && exists("l:goflags")
-        if exists($GOROOT)
-            let l:org_goroot = $GOROOT
-            unlet $GOROOT
-        endif
-        if exists($GOOS)
-            let l:org_goos = $GOOS
-            unlet $GOOS
-        endif
-        if exists($GOARCH)
-            let l:org_goarch = $GOARCH
-            unlet $GOARCH
-        endif
-        if exists($GOFLAGS)
-            let l:org_goflags = $GOFLAGS
-            unlet $GOFLAGS
-        endif
-
-        let $GOROOT = l:goroot
-        let $GOOS = l:goos
-        let $GOARCH = l:goarch
-        let $GOFLAGS = l:goflags
+    if has_key(info, 'goroot') && has_key(info, 'goos') && has_key(info, 'goarch') && has_key(info, 'build_tags')
+        let oldenv = {}
+        for key in ['GOROOT', 'GOOS', 'GOARCH', 'GOFLAGS']
+            let value = getenv(key)
+            if value != v:null
+                let oldenv[key] = value
+                unlet $GOROOT
+            endif
+        endfor
+        let $GOROOT = info['goroot']
+        let $GOOS = info['goos']
+        let $GOARCH = info['goarch']
+        let $GOFLAGS = '-tags=' .. join(info['build_tags'], ',')
 
         if has('nvim')
             call execute("LspStop")
@@ -59,34 +38,16 @@ function! tinygo#ChangeTinygoTargetTo(target)
             call execute("LspStopServer")
         endif
 
-
         call execute("sleep 100m")
         call execute("edit")
 
-        if exists("l:org_goroot")
-            let $GOROOT = l:org_goroot
-            unlet l:org_goroot
-        else
-            unlet $GOROOT
-        endif
-        if exists("l:org_goos")
-            let $GOOS = l:org_goos
-            unlet l:org_goos
-        else
-            unlet $GOOS
-        endif
-        if exists("l:org_goarch")
-            let $GOARCH = l:org_goarch
-            unlet l:org_goarch
-        else
-            unlet $GOARCH
-        endif
-        if exists("l:org_goflags")
-            let $GOFLAGS = l:org_goflags
-            unlet l:org_goflags
-        else
-            unlet $GOFLAGS
-        endif
+        for key in ['GOROOT', 'GOOS', 'GOARCH', 'GOFLAGS']
+            if has_key(oldenv,key)
+                call setenv(key, value)
+            else
+                call setenv(key, v:null)
+            endif
+        endfor
     else
         echo "some problem with `tinygo info -target " . a:target . "` execution"
     endif
