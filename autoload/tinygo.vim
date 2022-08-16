@@ -35,7 +35,6 @@ function! tinygo#ChangeTinygoTargetTo(target)
         let value = getenv(key)
         if value != v:null
             let oldenv[key] = value
-            unlet $GOROOT
         endif
     endfor
     let $GOROOT = info['goroot']
