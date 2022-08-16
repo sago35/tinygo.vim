@@ -25,39 +25,40 @@ function! tinygo#ChangeTinygoTargetTo(target)
     endif
     let info = json_decode(output)
 
-    if has_key(info, 'goroot') && has_key(info, 'goos') && has_key(info, 'goarch') && has_key(info, 'build_tags')
-        let oldenv = {}
-        for key in ['GOROOT', 'GOOS', 'GOARCH', 'GOFLAGS']
-            let value = getenv(key)
-            if value != v:null
-                let oldenv[key] = value
-                unlet $GOROOT
-            endif
-        endfor
-        let $GOROOT = info['goroot']
-        let $GOOS = info['goos']
-        let $GOARCH = info['goarch']
-        let $GOFLAGS = '-tags=' .. join(info['build_tags'], ',')
-
-        if has('nvim')
-            call execute("LspStop")
-        else
-            call execute("LspStopServer")
-        endif
-
-        call execute("sleep 100m")
-        call execute("edit")
-
-        for key in ['GOROOT', 'GOOS', 'GOARCH', 'GOFLAGS']
-            if has_key(oldenv,key)
-                call setenv(key, value)
-            else
-                call setenv(key, v:null)
-            endif
-        endfor
-    else
+    if !has_key(info, 'goroot') || !has_key(info, 'goos') || !has_key(info, 'goarch') || !has_key(info, 'build_tags')
         echo "some problem with `tinygo info -target " . a:target . "` execution"
+        return
     endif
+
+    let oldenv = {}
+    for key in ['GOROOT', 'GOOS', 'GOARCH', 'GOFLAGS']
+        let value = getenv(key)
+        if value != v:null
+            let oldenv[key] = value
+            unlet $GOROOT
+        endif
+    endfor
+    let $GOROOT = info['goroot']
+    let $GOOS = info['goos']
+    let $GOARCH = info['goarch']
+    let $GOFLAGS = '-tags=' .. join(info['build_tags'], ',')
+
+    if has('nvim')
+        call execute("LspStop")
+    else
+        call execute("LspStopServer")
+    endif
+
+    call execute("sleep 100m")
+    call execute("edit")
+
+    for key in ['GOROOT', 'GOOS', 'GOARCH', 'GOFLAGS']
+        if has_key(oldenv,key)
+            call setenv(key, value)
+        else
+            call setenv(key, v:null)
+        endif
+    endfor
 endfunction
 
 function! tinygo#ChangeTinygoTarget()
