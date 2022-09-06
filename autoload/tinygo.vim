@@ -45,15 +45,45 @@ function! tinygo#ChangeTinygoTargetTo(target)
         let $GOFLAGS = '-tags=' .. join(info['build_tags'], ',')
     endif
 
+    if exists('g:did_coc_loaded')
+        " vim/nvim + coc.nvim
+        let jsonStr = "{}"
+        if isdirectory(".vim")
+            call mkdir(".vim", "p", 0o700)
+            let cfg = ".vim/coc-settings.json"
+            let lines = readfile(cfg)
+            let jsonStr = join(lines, '')
+        endif
+        let x = json_decode(jsonStr)
+        let x["go.goplsOptions"] = {"env": {
+                    \ "GOROOT": $GOROOT,
+                    \ "GOOS": $GOOS,
+                    \ "GOARCH": $GOARCH,
+                    \ "GOFLAGS": $GOFLAGS,
+                    \ }}
 
-    if has('nvim')
+        for key in ['GOROOT', 'GOOS', 'GOARCH', 'GOFLAGS']
+            if x["go.goplsOptions"].env[key] == ""
+                unlet x["go.goplsOptions"].env[key]
+            endif
+        endfor
+
+        let y = json_encode(x)
+        call writefile([y], cfg)
+
+    elseif has('nvim')
         call execute("LspStop")
     else
         call execute("LspStopServer")
     endif
 
     call execute("sleep 100m")
-    call execute("edit")
+
+    if exists('g:did_coc_loaded')
+        " vim/nvim + coc.nvim
+    else
+        call execute("edit")
+    endif
 
     for key in ['GOROOT', 'GOOS', 'GOARCH', 'GOFLAGS']
         if has_key(oldenv,key)
