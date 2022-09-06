@@ -16,20 +16,6 @@
 "       Initial release
 
 function! tinygo#ChangeTinygoTargetTo(target)
-    let output = system('tinygo info -json -target ' . a:target)
-    if v:shell_error
-        for line in split(output, '\n')
-            echohl Error | echomsg line | echohl None
-        endfor
-        return
-    endif
-    let info = json_decode(output)
-
-    if !has_key(info, 'goroot') || !has_key(info, 'goos') || !has_key(info, 'goarch') || !has_key(info, 'build_tags')
-        echo "some problem with `tinygo info -target " . a:target . "` execution"
-        return
-    endif
-
     let oldenv = {}
     for key in ['GOROOT', 'GOOS', 'GOARCH', 'GOFLAGS']
         let value = getenv(key)
@@ -37,10 +23,28 @@ function! tinygo#ChangeTinygoTargetTo(target)
             let oldenv[key] = value
         endif
     endfor
-    let $GOROOT = info['goroot']
-    let $GOOS = info['goos']
-    let $GOARCH = info['goarch']
-    let $GOFLAGS = '-tags=' .. join(info['build_tags'], ',')
+
+    if a:target != "-"
+        let output = system('tinygo info -json -target ' . a:target)
+        if v:shell_error
+            for line in split(output, '\n')
+                echohl Error | echomsg line | echohl None
+            endfor
+            return
+        endif
+        let info = json_decode(output)
+
+        if !has_key(info, 'goroot') || !has_key(info, 'goos') || !has_key(info, 'goarch') || !has_key(info, 'build_tags')
+            echo "some problem with `tinygo info -target " . a:target . "` execution"
+            return
+        endif
+
+        let $GOROOT = info['goroot']
+        let $GOOS = info['goos']
+        let $GOARCH = info['goarch']
+        let $GOFLAGS = '-tags=' .. join(info['build_tags'], ',')
+    endif
+
 
     if has('nvim')
         call execute("LspStop")
@@ -67,6 +71,7 @@ function! tinygo#ChangeTinygoTarget()
     setlocal buftype=nofile
     setlocal nonu
     let targets = split(system('tinygo targets'))
+    call insert(targets, "-")
     for target in targets
         put=target
     endfor
