@@ -20,7 +20,8 @@ In that case, target can be selected by pressing ENTER.
 
 ```
 :TinygoTarget               open a list of targets.
-:TinygoTarget [target]      vim-lsp will be restarted with that target setting
+:TinygoTarget [target]      LSP-server will be restarted with that target setting
+:TinygoTarget -             stop integration
 ```
 
 ## Support
