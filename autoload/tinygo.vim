@@ -38,7 +38,6 @@ function! tinygo#ChangeTinygoTargetTo(target)
             echo "some problem with `tinygo info -target " . a:target . "` execution"
             return
         endif
-
         let $GOROOT = info['goroot']
         let $GOOS = info['goos']
         let $GOARCH = info['goarch']
@@ -48,20 +47,25 @@ function! tinygo#ChangeTinygoTargetTo(target)
     if exists('g:did_coc_loaded')
         " vim/nvim + coc.nvim
         let jsonStr = "{}"
+        let cfg = ".vim/coc-settings.json"
         if isdirectory(".vim")
+            try
+                let lines = readfile(cfg)
+                let jsonStr = join(lines, '')
+                let x = json_decode(jsonStr)
+            catch /.*/
+                let x = {}
+            endtry
+        else "No .vim directory exists
             call mkdir(".vim", "p", 0o700)
-            let cfg = ".vim/coc-settings.json"
-            let lines = readfile(cfg)
-            let jsonStr = join(lines, '')
+            let x = {}
         endif
-        let x = json_decode(jsonStr)
         let x["go.goplsOptions"] = {"env": {
                     \ "GOROOT": $GOROOT,
                     \ "GOOS": $GOOS,
                     \ "GOARCH": $GOARCH,
                     \ "GOFLAGS": $GOFLAGS,
                     \ }}
-
         for key in ['GOROOT', 'GOOS', 'GOARCH', 'GOFLAGS']
             if x["go.goplsOptions"].env[key] == ""
                 unlet x["go.goplsOptions"].env[key]
