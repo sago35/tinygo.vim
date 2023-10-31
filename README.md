@@ -32,6 +32,12 @@ In that case, target can be selected by pressing ENTER.
 * Neovim + [coc.nvim](https://github.com/neoclide/coc.nvim)
 
 
+## for Neovim user
+
+If you are a Neovim user, you may want to try the native plugin.
+
+* [pcolladosoto/tinygo.nvim](https://github.com/pcolladosoto/tinygo.nvim)
+
 ## LICENSE
 
 MIT
