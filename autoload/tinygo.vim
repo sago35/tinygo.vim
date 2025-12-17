@@ -76,7 +76,18 @@ function! tinygo#ChangeTinygoTargetTo(target)
         call writefile([y], cfg)
 
     elseif has('nvim')
-        call execute("LspStop")
+        if luaeval('vim.lsp.config ~= nil')
+            " Neovim native LSP
+            let l:env = {}
+            if $GOROOT != '' | let l:env['GOROOT'] = $GOROOT | endif
+            if $GOOS != '' | let l:env['GOOS'] = $GOOS | endif
+            if $GOARCH != '' | let l:env['GOARCH'] = $GOARCH | endif
+            if $GOFLAGS != '' | let l:env['GOFLAGS'] = $GOFLAGS | endif
+            call luaeval('vim.lsp.config("gopls", { cmd_env = _A })', l:env)
+            lua vim.lsp.enable('gopls', false)
+        else
+            call execute("LspStop")
+        endif
     else
         call execute("LspStopServer")
     endif
@@ -85,6 +96,9 @@ function! tinygo#ChangeTinygoTargetTo(target)
 
     if exists('g:did_coc_loaded')
         " vim/nvim + coc.nvim
+    elseif has('nvim') && luaeval('vim.lsp.config ~= nil')
+        " Neovim native LSP
+        lua vim.lsp.enable('gopls', true)
     else
         call execute("edit")
     endif
