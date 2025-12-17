@@ -104,8 +104,8 @@ function! tinygo#ChangeTinygoTargetTo(target)
     endif
 
     for key in ['GOROOT', 'GOOS', 'GOARCH', 'GOFLAGS']
-        if has_key(oldenv,key)
-            call setenv(key, value)
+        if has_key(oldenv, key)
+            call setenv(key, oldenv[key])
         else
             call setenv(key, v:null)
         endif
